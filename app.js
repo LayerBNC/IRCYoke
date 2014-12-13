@@ -20,7 +20,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var bodyParser = require('body-parser');
-
+var irc = require('irc');
 var uuid = require('node-uuid');
 var serverLocation = config.webHost + ":" + config.webPort;
 var socketLocation = config.webHost + ":" + parseInt(config.webPort+1);
@@ -29,76 +29,16 @@ var app = express();
 
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var passwords = [];
-
-/*
-var yoke = {
-    createClient: function (username, password, port, server) {
-        console.log('called');
-        clientKey = uuid.v4();
-
-        // On forcejoin, JOIN directive is received
-        if (password === "") {
-            serverPassword = false;
-        }
-        var useSSL = (port.indexOf("+") > -1);
-        try {
-            if (useSSL === true) {
-                port = parseInt(port.slice(1, port.length)); // Get rid of the + and parseInt
-            }
-            else {
-                port = parseInt(port);
-            }
-        }
-        catch (err) {
-            return false;
-        }
-        console.log('called2');
-
-        var client = api.createClient(clientKey, {
-            nick : username,
-            user : username,
-            server : server,
-            realname: 'IRCYoke User',
-            port: port,
-            password: serverPassword,
-            secure: useSSL
-        });
-        this.debugHook(clientKey);
-        console.log('called3');
-
-        return [client, clientkey];
-
-    },
-    destroyClient: function (clientKey) {
-        try {
-            var destroyed = api.destroyClient(clientKey);
-            return true;
-        }
-        catch (err) {
-            return false;
-        }
-
-    },
-    debugHook: function (clientKey) {
-        api.hookEvent(clientKey, '*', function(message) {
-            console.log(message);
-        });
-    }
-
-};
-*/
-
-
+var users = [];
 
 server.listen(parseInt(config.webPort+1));
 app.listen(config.webPort);
 
 console.log("Starting IRCYoke...");
 console.log("IRCYoke listening at " + serverLocation);
-
+var randomID = uuid.v4();
 app.use(session({
-    secret: 'omg_so_secret'
+    secret: randomID
 }));
 
 app.set('views', path.join(__dirname, 'views'));
@@ -142,51 +82,57 @@ io.on('connection', function (socket) {
   console.log('A client connected.');
   socket.emit('loadStatusChange', { status: 'Awaiting configuration declaration...' });
   //yoke.createClient("ircyoketest", "", "6667", "irc.freenode.net", "test"); // fix
-  socket.on('confDec', function (data) {
+  socket.on('confDecConnect', function (data) {
       console.log(data);
-      var server_host = data.host;
-      var server_port = data.port;
+      var sid = data.sid;
+      var server_host, server_port, server_pass, server_user;
+      try {
+          server_host = users[sid].server_host;
+          server_port = users[sid].server_port;
+          server_pass = users[sid].password;
+          server_user = users[sid].username;
+      }
+      catch (err) {
+          socket.emit('loadStatusChange', { status: "Disconnected by server: Invalid session ID"});
+          socket.disconnect();
+          return;
+      }
+
       if ((server_hosts.indexOf(server_host) < 0) && (config.allowedPorts.indexOf(server_port) < 0)) {
           // res.send("Okay, so your username is " + username + " and your password is " + password + "for server "+server_host);
-          socket.emit('loadStatusChange', { status: 'Your configuration declaration has been rejected. <br /> Please make sure you are declaring only allowed servers and ports. ' });
+          socket.emit('loadStatusChange', { status: 'Server and Port not allowed. Disconnected by server.' });
+          socket.emit('kill');
+          socket.disconnect();
           socket.boycott = true;
           return;
       }
-      clientKey = uuid.v4();
-      var username = socket.username;
-      var password = passwords[username];
-      var server = socket.server;
-      var port = socket.port;
-      socket.emit('loadStatusChange', { status: "Configuration accepted, waiting for client..." });
+      clientKey = sid;
+      socket.emit('loadStatusChange', { status: "Connection accepted, waiting for remote server..." });
 
-  });
-  socket.on('ircConnect', function (data) {
-      if (socket.boycott === true) {
-          io.emit('loadStatusChange', {status: "Connection killed by IRCYoke: invalid configuration"});
-          return;
-      }
       // On forcejoin, JOIN directive is received
-      if (password === "") {
-          serverPassword = false;
+      var connect = [];
+      if (server_pass === "") {
+          connect.pass = false;
       }
-      var useSSL = (port.indexOf("+") > -1);
+      connect.ssl = (server_port.indexOf("+") > -1);
       try {
-          if (useSSL === true) {
-              port = parseInt(port.slice(1, port.length)); // Get rid of the + and parseInt
+          if (connect.ssl === true) {
+              connect.port = parseInt(server_port.slice(1, port.length)); // Get rid of the + and parseInt
           }
           else {
-              port = parseInt(port);
+              connect.port = parseInt(server_port);
           }
       }
       catch (err) {
-          return false;
+          socket.emit('loadStatusChange', { status: "Error: Could not parse server information."});
+          socket.disconnect();
       }
-      socket.emit('loadStatusChange', {status: "Connected to IRC! Waiting for stabilization..."});
+
+
+      socket.emit('loadStatusChange', { status: "Connected to IRC! Waiting for stabilization..." });
+
   });
 
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
 });
 
 
@@ -199,9 +145,9 @@ function genHandleError(res, err) {
 }
 
 app.get('/', function(req,res) {
-    var username = req.session.username;
-    if (username && username !== null && username !== undefined) {
-        res.render('mainLoggedIn', {serverLocation: socketLocation, username: username, tServerHost: req.session.server, tServerPort: req.session.port});
+    var sid = req.session.sid;
+    if (sid && sid !== null && sid !== undefined) {
+        res.render('mainLoggedIn', {sid: sid, serverLocation: socketLocation});
     }
     else {
         var serverHosts = config.allowedHosts.split(':');
@@ -228,10 +174,13 @@ app.post('/identify', function(req, res) {
 
     if ((server_hosts.indexOf(server_host) > -1) && (config.allowedPorts.indexOf(server_port) > -1)) {
         // res.send("Okay, so your username is " + username + " and your password is " + password + "for server "+server_host);
-        req.session.username = username;
-        req.session.server = server_host;
-        req.session.port = server_port;
-        passwords[username] = password;
+        var sid = uuid.v4();
+        req.session.sid = sid;
+        users[sid] = [];
+        users[sid].username = username;
+        users[sid].server_host = server_host;
+        users[sid].server_port = server_port;
+        users[sid].password = password;
         res.writeHead(301,
             {Location: '/'}
         );

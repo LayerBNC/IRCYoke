@@ -13,7 +13,6 @@ $(function () {
         $('#statusText').text(data.status);
     });
     socket.on('connect', function () {
-        socket.emit('confDec', {"host": tServerHost, "port": tServerPort});
+        socket.emit('confDecConnect', {"sid": sid});
     });
-
 });
