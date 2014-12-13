@@ -1,0 +1,30 @@
+{{#modal-dialog action="close" className="wide"}}
+	<div class="modal-header clearfix">
+		<h3>{{title}}</h3>
+		<i class="fa fa-times close-icon"></i>
+	</div>
+	<div class="modal-body">
+		<table width="100%" cellpadding="0" cellspacing="0" class="infolist">
+			<thead>
+				<tr>
+					{{view App.SortingTableHeader text="Hostname" property="hostname"}}
+					{{view App.SortingTableHeader text="Set by" property="setby"}}
+					{{view App.SortingTableHeader text="Date" property="timestamp"}}
+				</tr>
+			</thead>
+			<tbody>
+				{{#each controller}}
+					<tr>
+						<td>{{hostname}}</td>
+						<td>{{setby}}</td>
+						<td>{{date}}</td>
+					</tr>
+				{{else}}
+					<tr>
+						<td colspan="3">There are no results to display</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+{{/modal-dialog}}

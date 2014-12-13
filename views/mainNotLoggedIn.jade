@@ -1,0 +1,30 @@
+extends ./layout.jade
+
+block content
+    div(style='text-align:center')
+        div(class="header")
+            h1 IRCYoke
+            p The practical IRC client.
+        div(class="clearfix")
+        div(class="fpWrapper clearfix")
+            div(class="fpIntro")
+                br
+                br
+                div.col-md-3
+                div.col-md-6
+                    form(action='/identify', method='POST')
+                        b Username:
+                        br
+                        input#username.form-control(type='text', name='username', placeholder='BouncerUser')
+                        br
+                        b Password:
+                        br
+                        input#password.form-control(type='password', name='password', placeholder='password123')
+                        br
+                        b Server:
+                        select#serverhost.form-control(name='server_host')
+                            each server in servers
+                                option(value=server) #{server}
+                        br
+                        input#submit.btn.btn-success(type='submit', style='width:80%', value='Login')
+                div.col-md-3

@@ -1,0 +1,49 @@
+/*
+    IRCYoke
+    Multi-network web interface for ZNC.
+    http://github.com/Cydrobolt/IRCYoke
+    @copyright [c] 2014 Chaoyi Zha
+    @license MIT
+    @title IRCYoke Stylesheets
+*/
+
+@font-face {
+    font-family: 'halloSans';
+    src: url(/fonts/hallosans.otf);
+}
+.header {
+    font-family: 'Open Sans', Arial, sans-serif;
+    position: relative;
+    width: 100%;
+    background-color: #0b2e60;
+    // margin-bottom: 50px;
+    overflow: auto;
+}
+.header h1 {
+    font-family: 'Exo 2';
+    font-size: 70px;
+    color: white;
+}
+.fpWrapper {
+    position: fixed;
+    width: 100%;
+    display: block;
+    // margin-top: 100px;
+    background-color: #4480FA;
+    height: 100%;
+    overflow: auto;
+    color: white;
+    // overflow-y: hidden;
+    margin-bottom: 0;
+
+}
+.fpIntro {
+    position: relative;
+    //max-width: 920px;
+    margin: 0 auto;
+    //padding: 0 20px;
+}
+body {
+    margin-top: 0;
+    height: 100%;
+}
