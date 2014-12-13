@@ -12,5 +12,8 @@ $(function () {
     socket.on('loadStatusChange', function (data) {
         $('#statusText').text(data.status);
     });
+    socket.on('connect', function () {
+        socket.emit('confDec', {"host": tServerHost, "port": tServerPort});
+    });
 
 });

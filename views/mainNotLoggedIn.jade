@@ -26,5 +26,10 @@ block content
                             each server in servers
                                 option(value=server) #{server}
                         br
+                        b Port:
+                        select#serverport.form-control(name='server_port')
+                            each port in ports
+                                option(value=port) #{port}
+                        br
                         input#submit.btn.btn-success(type='submit', style='width:80%', value='Login')
                 div.col-md-3

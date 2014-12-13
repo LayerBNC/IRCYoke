@@ -35,7 +35,12 @@
     "jade": "~1.6.0",
     "cookie-session": "~1.0.2",
     "sanitize-html": "~1.4.3",
-    "socket.io": "~1.2.1"
+    "socket.io": "~1.2.1",
+    "irc-factory": "~1.10.1",
+    "node-uuid": "~1.4.2",
+    "connect-redis": "~2.1.0",
+    "express-session": "~1.9.3",
+    "redis": "~0.12.1"
   },
   "devDependencies": {
     "gulp": "~3.8.10"
