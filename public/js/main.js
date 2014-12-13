@@ -6,6 +6,11 @@
     @license MIT
     @title IRCYoke Main Script
 */
+
 $(function () {
-    //$("#wrapall").html('<h2>HELLO</h2>');
+    var socket = io(serverLocation);
+    socket.on('loadStatusChange', function (data) {
+        $('#statusText').text(data.status);
+    });
+
 });

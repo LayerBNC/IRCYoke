@@ -19,3 +19,8 @@ block content
                       div.tetromino.box2
                       div.tetromino.box3
                       div.tetromino.box4
+                    div#status
+                        b#statusText(class='animated fadeInDown')
+                            | Establishing connection to IRCYoke...
+    script
+        | var serverLocation = "#{serverLocation}"

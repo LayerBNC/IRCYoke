@@ -21,15 +21,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var bodyParser = require('body-parser');
-// var session = require('express-session');
 
-var io = require('socket.io')(app);
-
+var serverLocation = config.webHost + ":" + config.webPort;
+var socketLocation = config.webHost + ":" + parseInt(config.webPort+1);
 var app = express();
+
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+server.listen(parseInt(config.webPort+1));
 app.listen(config.webPort);
 
 console.log("Starting IRCYoke...");
-console.log("IRCYoke listening at " + config.webHost + ":" + config.webPort);
+console.log("IRCYoke listening at " + serverLocation);
 
 app.use(session({
     secret: 'omg_so_secret'
@@ -59,6 +62,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*
+ * SocketIO
+ */
+
+io.on('connection', function (socket) {
+  console.log('omg');
+  socket.emit('loadStatusChange', { status: 'Connecting to IRC server...' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+});
+
+/*
    Routes
 */
 function genHandleError(res, err) {
@@ -68,7 +83,7 @@ function genHandleError(res, err) {
 app.get('/', function(req,res) {
     var username = req.session.username;
     if (username && username !== null && username !== undefined) {
-        res.render('mainLoggedIn');
+        res.render('mainLoggedIn', {serverLocation: socketLocation});
     }
     else {
         var serverHosts = config.zncHosts.split(':');
