@@ -31,6 +31,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var users = []; // Userinfo
 var clients = []; // IRC Connections
+var timers = []; // Self explanatory
 
 server.listen(parseInt(config.webPort+1));
 app.listen(config.webPort);
@@ -67,34 +68,53 @@ app.use(express.static(path.join(__dirname, 'build')));
 var server_hosts = config.allowedHosts.split(':');
 
 /*
+ * Yoke
+ */
+var yoke = {
+    listen: function (socket, client) {
+        client.on('raw', function (msg) {
+            socket.emit('log', { log: msg });
+        }); // debug
+    }
+};
+
+/*
  * SocketIO
  */
- /*
-io.use(function(socket, next) {
-    var req = socket.handshake;
-    var res = {};
-    cookieParser(req, res, function(err) {
-        if (err) return next(err);
-        session(req, res, next);
-    });
-});
-*/
+
+
+
+
 io.on('connection', function (socket) {
   console.log('A client connected.');
   socket.emit('loadStatusChange', { status: 'Awaiting configuration declaration...' });
   //yoke.createClient("ircyoketest", "", "6667", "irc.freenode.net", "test"); // fix
   socket.on('disconnect', function(data) {
-      try {
-          clients[socket.sid].disconnect("IRCYoke: user disconnected");
-          delete clients[socket.sid];
-          console.log('Client deleted!');
-      }
-      catch(err){console.log('Could not delete client: '+err);}
+      /*timers[socket.sid] = setTimeout(function () {*/
+          try {
+              clients[socket.sid].disconnect("IRCYoke: user disconnected");
+              delete clients[socket.sid];
+              delete timers[socket.sid];
+              console.log('Client deleted!');
+          }
+          catch(err){console.log('Could not delete client: '+err);}
+      /*}, 10000); // Ten second grace period to reconnect before killing connection*/
+
   });
   socket.on('confDecConnect', function (data) {
-      console.log(data);
       var sid = data.sid;
       socket.sid = sid;
+      /*try {
+          if (timers.indexOf(sid) > -1) {
+              // Let them live if their connection is on grace
+              clearTimeout(timers[sid]);
+              delete timers[sid];
+              socket.emit('loadStatusChange', { status: "Resuming previous session..." });
+              socket.emit('readyConnect');
+              yoke.listen(socket, clients[sid]);
+              return;
+          }
+      } catch(err) {}*/
       var server_host, server_port, server_pass, server_user;
       try {
           server_host = users[sid].server_host;
@@ -104,7 +124,19 @@ io.on('connection', function (socket) {
       }
       catch (err) {
           socket.emit('loadStatusChange', { status: "Disconnected by server: Invalid session ID"});
-          socket.disconnect();
+          socket.emit('kill', function () {
+              socket.disconnect();
+          });
+          socket.emit('loadStatusChange', { status: "stillconnectedorno"});
+          return;
+      }
+      var usernameRegex = /[a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]*/;
+      var usernameMatchRegex = server_user.match(usernameRegex);
+      if (usernameMatchRegex != server_user) {
+          socket.emit('loadStatusChange', { status: 'Invalid username. Disconnected by server.' });
+          socket.emit('kill', function () {
+              socket.disconnect();
+          });
           return;
       }
 
@@ -113,7 +145,6 @@ io.on('connection', function (socket) {
           socket.emit('loadStatusChange', { status: 'Server and Port not allowed. Disconnected by server.' });
           socket.emit('kill');
           socket.disconnect();
-          socket.boycott = true;
           return;
       }
       socket.emit('loadStatusChange', { status: "Connection accepted, waiting for remote server..." });
@@ -154,6 +185,7 @@ io.on('connection', function (socket) {
           socket.emit('loadStatusChange', { status: "Connection complete, initializing UI..." });
           socket.emit('readyConnect');
       });
+      yoke.listen(socket, clients[sid]);
   });
 
 });

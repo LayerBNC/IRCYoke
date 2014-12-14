@@ -1,13 +1,46 @@
-input {
-  font-family:
-    "HelveticaNeue-Light",
-    "Helvetica Neue Light",
-    "Helvetica Neue",
-    Helvetica,
-    Arial,
-    "Lucida Grande",
-    sans-serif;
+/*
+    IRCYoke
+    Multi-network web interface for ZNC.
+    http://github.com/Cydrobolt/IRCYoke
+    @copyright [c] 2014 Chaoyi Zha
+    @license MIT
+    @title IRCYoke UI Stylesheets
+*/
+.wrapAll {
+    margin-left: 0;
 }
+.header {
+    font-family: 'Open Sans', Arial, sans-serif;
+    //position: absolute;
+    width: 100%;
+    background-color: #0b2e60;
+    overflow: auto;
+}
+.header h1 {
+    font-family: 'Exo 2';
+    font-size: 40px;
+    color: white;
+}
+.fpWrapper {
+    position: fixed;
+    width: 100%;
+    display: block;
+    background-color: #4480FA;
+    height: 100%;
+    overflow: auto;
+    color: white;
+    margin-bottom: 0;
+
+}
+.fpIntro {
+    position: relative;
+    margin: 0 auto;
+}
+body {
+    margin-top: 0;
+    height: 100%;
+}
+
 
 /* Chat page */
 
@@ -25,12 +58,6 @@ input {
   font-size: 100%;
 }
 
-.log {
-  color: gray;
-  font-size: 70%;
-  margin: 5px;
-  text-align: center;
-}
 
 /* Messages */
 
@@ -67,6 +94,7 @@ input {
   left: 0;
   outline: none;
   padding-left: 10px;
+  color: black;
   position: absolute;
   right: 0;
   width: 100%;

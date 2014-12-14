@@ -108,7 +108,8 @@ gulp.task('default', function() {
 
     var source_files = [
         __dirname + "/client/src/init.js",
-        __dirname + "/client/src/backbone-min.js"
+        __dirname + "/client/src/backbone-min.js",
+		__dirname + "/client/src/handlebars-v2.0.0.js"
     ];
 
 
