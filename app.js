@@ -128,7 +128,7 @@ io.on('connection', function (socket) {
       connect.ssl = (server_port.indexOf("+") > -1);
       try {
           if (connect.ssl === true) {
-              connect.port = parseInt(server_port.slice(1, port.length)); // Get rid of the + and parseInt
+              connect.port = parseInt(server_port.slice(1, server_port.length)); // Get rid of the + and parseInt
           }
           else {
               connect.port = parseInt(server_port);
@@ -139,6 +139,8 @@ io.on('connection', function (socket) {
           socket.disconnect();
       }
       clients[sid] = new irc.Client(connect.host, connect.user, {
+        userName: connect.user,
+        realName: 'IRCYoke User',
       	port: connect.port,
         debug: true,
     	secure: connect.ssl,
@@ -150,6 +152,7 @@ io.on('connection', function (socket) {
       socket.emit('loadStatusChange', { status: "Connected to IRC! Waiting for stabilization..." });
       clients[sid].on('registered', function() {
           socket.emit('loadStatusChange', { status: "Connection complete, initializing UI..." });
+          socket.emit('readyConnect');
       });
   });
 

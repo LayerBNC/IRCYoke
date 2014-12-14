@@ -115,7 +115,9 @@ gulp.task('default', function() {
     /**
      * Build JavaScript files
      */
+     mkdir(__dirname + "/build");
      mkdir(__dirname + "/build/js");
+
     concat(source_files, function (err, src) {
         if (!err) {
             src = '(function (global, undefined) {\n\n' + src + '\n\n})(window);';

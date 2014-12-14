@@ -18,4 +18,11 @@ $(function () {
     socket.on('disconnect', function () {
         $('#statusText').text("Disconnected from server. Retrying...");
     });
+    socket.on('readyConnect', function () {
+
+      $.get( "initui.html", function( data ) {
+          $('#wrapAll').html(data);
+        });
+
+    });
 });
