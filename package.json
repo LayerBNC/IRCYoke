@@ -40,7 +40,10 @@
     "node-uuid": "~1.4.2",
     "connect-redis": "~2.1.0",
     "express-session": "~1.9.3",
-    "redis": "~0.12.1"
+    "redis": "~0.12.1",
+    "lodash": "~2.4.1",
+    "uglify-js": "~2.4.16",
+    "gulp-nodemon": "~1.0.4"
   },
   "devDependencies": {
     "gulp": "~3.8.10"

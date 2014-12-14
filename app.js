@@ -29,7 +29,8 @@ var app = express();
 
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var users = [];
+var users = []; // Userinfo
+var clients = []; // IRC Connections
 
 server.listen(parseInt(config.webPort+1));
 app.listen(config.webPort);
@@ -62,7 +63,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'build')));
 var server_hosts = config.allowedHosts.split(':');
 
 /*
@@ -82,9 +83,18 @@ io.on('connection', function (socket) {
   console.log('A client connected.');
   socket.emit('loadStatusChange', { status: 'Awaiting configuration declaration...' });
   //yoke.createClient("ircyoketest", "", "6667", "irc.freenode.net", "test"); // fix
+  socket.on('disconnect', function(data) {
+      try {
+          clients[socket.sid].disconnect("IRCYoke: user disconnected");
+          delete clients[socket.sid];
+          console.log('Client deleted!');
+      }
+      catch(err){console.log('Could not delete client: '+err);}
+  });
   socket.on('confDecConnect', function (data) {
       console.log(data);
       var sid = data.sid;
+      socket.sid = sid;
       var server_host, server_port, server_pass, server_user;
       try {
           server_host = users[sid].server_host;
@@ -106,13 +116,14 @@ io.on('connection', function (socket) {
           socket.boycott = true;
           return;
       }
-      clientKey = sid;
       socket.emit('loadStatusChange', { status: "Connection accepted, waiting for remote server..." });
 
       // On forcejoin, JOIN directive is received
       var connect = [];
+      connect.host = server_host;
+      connect.user = server_user;
       if (server_pass === "") {
-          connect.pass = false;
+          connect.pass = null;
       }
       connect.ssl = (server_port.indexOf("+") > -1);
       try {
@@ -127,10 +138,19 @@ io.on('connection', function (socket) {
           socket.emit('loadStatusChange', { status: "Error: Could not parse server information."});
           socket.disconnect();
       }
+      clients[sid] = new irc.Client(connect.host, connect.user, {
+      	port: connect.port,
+        debug: true,
+    	secure: connect.ssl,
+        channels: ['##cydrobolt', '##fwilson'],
+        password: connect.pass
+      });
 
 
       socket.emit('loadStatusChange', { status: "Connected to IRC! Waiting for stabilization..." });
-
+      clients[sid].on('registered', function() {
+          socket.emit('loadStatusChange', { status: "Connection complete, initializing UI..." });
+      });
   });
 
 });
