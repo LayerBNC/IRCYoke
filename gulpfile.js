@@ -107,13 +107,15 @@ gulp.task('default', function() {
 
 
     var source_files = [
-        __dirname + "/client/src/init.js"
+        __dirname + "/client/src/init.js",
+        __dirname + "/client/src/backbone-min.js"
     ];
 
 
     /**
      * Build JavaScript files
      */
+     mkdir(__dirname + "/build/js");
     concat(source_files, function (err, src) {
         if (!err) {
             src = '(function (global, undefined) {\n\n' + src + '\n\n})(window);';
