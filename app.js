@@ -123,7 +123,7 @@ io.on('connection', function (socket) {
           server_user = users[sid].username;
       }
       catch (err) {
-          socket.emit('loadStatusChange', { status: "Disconnected by server: Invalid session ID"});
+          socket.emit('loadStatusChange', { status: "Disconnected by server: Invalid session ID <br /><a href=\"/logout\">Try Again</a>"});
           socket.emit('kill', function () {
               socket.disconnect();
           });
@@ -133,7 +133,7 @@ io.on('connection', function (socket) {
       var usernameRegex = /[a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]*/;
       var usernameMatchRegex = server_user.match(usernameRegex);
       if (usernameMatchRegex != server_user) {
-          socket.emit('loadStatusChange', { status: 'Invalid username. Disconnected by server.' });
+          socket.emit('loadStatusChange', { status: 'Invalid username. Disconnected by server. <br /><a href="/logout">Try Again</a>' });
           socket.emit('kill', function () {
               socket.disconnect();
           });
@@ -142,7 +142,7 @@ io.on('connection', function (socket) {
 
       if ((server_hosts.indexOf(server_host) < 0) && (config.allowedPorts.indexOf(server_port) < 0)) {
           // res.send("Okay, so your username is " + username + " and your password is " + password + "for server "+server_host);
-          socket.emit('loadStatusChange', { status: 'Server and Port not allowed. Disconnected by server.' });
+          socket.emit('loadStatusChange', { status: 'Server and Port not allowed. Disconnected by server. <br /><a href="/logout">Try Again</a>' });
           socket.emit('kill');
           socket.disconnect();
           return;
@@ -166,9 +166,10 @@ io.on('connection', function (socket) {
           }
       }
       catch (err) {
-          socket.emit('loadStatusChange', { status: "Error: Could not parse server information."});
+          socket.emit('loadStatusChange', { status: "Error: Could not parse server information. <br /><a href=\"/logout\">Try Again</a>"});
           socket.disconnect();
       }
+      return;
       clients[sid] = new irc.Client(connect.host, connect.user, {
         userName: connect.user,
         realName: 'IRCYoke User',
@@ -177,7 +178,7 @@ io.on('connection', function (socket) {
     	secure: connect.ssl,
         channels: ['##cydrobolt', '##fwilson'],
         password: connect.pass
-      });
+    });
 
 
       socket.emit('loadStatusChange', { status: "Connected to IRC! Waiting for stabilization..." });
@@ -202,7 +203,8 @@ function genHandleError(res, err) {
 app.get('/', function(req,res) {
     var sid = req.session.sid;
     if (sid && sid !== null && sid !== undefined) {
-        res.render('mainLoggedIn', {sid: sid, serverLocation: socketLocation});
+        var sendUser = users[sid].username;
+        res.render('mainLoggedIn', {sid: sid, serverLocation: socketLocation, username: sendUser});
     }
     else {
         var serverHosts = config.allowedHosts.split(':');
@@ -212,7 +214,7 @@ app.get('/', function(req,res) {
 
 
 app.get('/logout', function(req, res) {
-    delete req.session.username;
+    delete req.session.sid;
     res.writeHead(301,
          {Location: '/'}
     );

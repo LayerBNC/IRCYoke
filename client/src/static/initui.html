@@ -1,19 +1,31 @@
 <div class="container-fluid">
-    <div class="header row-md-2">
-      <h1 class="lpad">IRCYoke</h1>
-    </div>
-
     <div class="clearfix"></div>
 
     <div class="fpWrapper row-md-10">
-        <div class="fpIntro">
+        <div class="col-md-10">
+            <div class="fpIntro">
 
-            <div class="chatArea row-md-9">
-                <ul class="messages"></ul>
-            </div>
-            <div class="bottomWrap row-md-1">
-                <input class="inputMessage" placeholder="Type here..."/>
+                <div class="chatArea row-md-9">
+                    <ul class="messages"></ul>
+                </div>
+                <div class="bottomWrap row-md-1" id="field_outer">
+
+                    <strong id="fill_username"></strong>
+
+                    <input class="form-control inputMessage" placeholder="Type here..."/>
+                </div>
             </div>
         </div>
+        <div class="col-md-2 rightTab">
+            <div class="header row-md-2">
+              <span class="name">IRCYoke</span>
+            </div>
+            <!-- Userlist -->
+            <div id="userlist">
+                <h2>Userlist goes here</h2>
+            </div>
+        </div>
+
     </div>
+
 </div>

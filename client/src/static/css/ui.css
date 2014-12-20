@@ -6,56 +6,47 @@
     @license MIT
     @title IRCYoke UI Stylesheets
 */
-.wrapAll {
-    margin-left: 0;
+#wrapAll {
+    // Stuff
 }
 .header {
     font-family: 'Open Sans', Arial, sans-serif;
     //position: absolute;
     width: 100%;
-    background-color: #0b2e60;
     overflow: auto;
 }
-.header h1 {
-    font-family: 'Exo 2';
-    font-size: 40px;
+.header span {
+    // font-family: 'Exo 2';
+    font-size: 50px;
     color: white;
 }
 .fpWrapper {
     position: fixed;
     width: 100%;
     display: block;
-    background-color: #4480FA;
     height: 100%;
     overflow: auto;
     color: white;
     margin-bottom: 0;
 
 }
+.rightTab {
+    background-color: grey;
+    height: 100%;
+}
 .fpIntro {
     position: relative;
     margin: 0 auto;
 }
 body {
-    margin-top: 0;
+    margin: 0;
     height: 100%;
+    width: 100%;
 }
 
-
-/* Chat page */
-
-.chat.page {
-  display: none;
-}
-
-/* Font */
-
-.messages {
-  font-size: 150%;
-}
-
-.inputMessage {
-  font-size: 100%;
+.container-fluid {
+    padding-left:0px;
+    padding-right:0px;
 }
 
 
@@ -68,37 +59,42 @@ body {
 
 .messages {
   height: 100%;
-  margin: 0;
+  // margin: 0;
   overflow-y: scroll;
-  padding: 10px 20px 10px 20px;
+  // padding: 10px 20px 10px 20px;
 }
 
-.message.typing .messageBody {
-  color: gray;
-}
-
-.username {
-  float: left;
-  font-weight: 700;
-  overflow: hidden;
-  padding-right: 15px;
-  text-align: right;
-}
 
 /* Input */
 
+#field_outer {
+    position: fixed;
+    bottom: 2px;
+    width: 100%;
+}
+#fill_username {
+    color: black;
+    float: left;
+    text-align: right;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    width: 5%;
+}
+
+
 .inputMessage {
-  border: 10px solid #000;
-  bottom: 0;
-  height: 60px;
-  left: 0;
-  outline: none;
-  padding-left: 10px;
+  /*border: 10px solid #000;
+  border-color: grey;*/
+  border-color: orange;
+  float: right;
+  // height: 60px;
+  // outline: none;
+  width: 95%;
   color: black;
-  position: absolute;
-  right: 0;
-  width: 100%;
+  right: 10px;
+  // width: 100%;
+  font-size: 100%;
 }
 .lpad {
-    padding-left: 9%;
+    padding-left: 1%;
 }

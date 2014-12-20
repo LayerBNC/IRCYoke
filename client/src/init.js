@@ -11,7 +11,7 @@ $(function () {
     var socket = io(serverLocation);
     var kbs = false;
     socket.on('loadStatusChange', function (data) {
-        $('#statusText').text(data.status);
+        $('#statusText').html(data.status);
     });
     socket.on('connect', function () {
         socket.emit('confDecConnect', {"sid": sid});
@@ -26,11 +26,28 @@ $(function () {
     });
 
 
-    socket.on('readyConnect', function () {
-    //socket.on('connect', function () {
+    //socket.on('readyConnect', function () {
+    socket.on('connect', function () {
       $.get( "initui.html", function( data ) {
           $('#wrapAll').html(data);
-          $('#wrapAll').attr("class", "container");
+          $('#nonUI').remove();
+          $('#fill_username').text(username);
+          var Userlist = Backbone.Model.extend({
+            promptColor: function() {
+                var cssColor = prompt("Please enter a CSS color:");
+                this.set({color: cssColor});
+            }
+          });
+
+        window.sidebar = new Userlist;
+
+        sidebar.on('change:color', function(model, color) {
+          $('#sidebar').css({background: color});
+        });
+
+
+
+
         });
     });
     socket.on('log', function (data) {

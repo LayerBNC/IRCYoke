@@ -3,6 +3,7 @@ block css
     link(rel='stylesheet', href='css/loading.css')
     link(rel='stylesheet', href='css/lib/animate.css')
     link(rel='stylesheet', href='css/ui.css')
+    link(rel='stylesheet', id='nonUI', href='/css/style.css')
 block content
     div(id="wrapAll")
         div(style='text-align:center')
@@ -24,7 +25,7 @@ block content
                         b#statusText(class='animated fadeInDown')
                             | Establishing connection to IRCYoke...
     script
-        | var sid = "#{sid}", serverLocation = "#{serverLocation}";
+        | var sid = "#{sid}", serverLocation = "#{serverLocation}", username = "#{username}";
     script(src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js")
     script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js")
     script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
