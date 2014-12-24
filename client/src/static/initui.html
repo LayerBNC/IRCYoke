@@ -1,3 +1,9 @@
+<!--  DEBUG -->
+<script src="src/static/templates/sidebar.hbs" id="sidebar-template" type="text/x-handlebars-template"></script>
+<script src="src/lib.js"></script>
+
+<script src="src/client.js"></script>
+
 <div class="container-fluid">
     <div class="clearfix"></div>
 
@@ -19,10 +25,17 @@
         <div class="col-md-2 rightTab">
             <div class="header row-md-2">
               <span class="name">IRCYoke</span>
+
             </div>
+            <br />
+            <span class="hdbar">
+              <a class="hdbarlink pull-left" href="/logout">Log out</a>
+              <a class="hdbarlink pull-right" href="//github.com/cydrobolt/IRCYoke/wiki">Help</a>
+            </span>
             <!-- Userlist -->
             <div id="userlist">
-                <h2>Userlist goes here</h2>
+                <!-- // DEBUG -->
+                <img src="src/static/img/loading30x30.gif" />
             </div>
         </div>
 

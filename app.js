@@ -64,7 +64,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'build')));
+// DEBUG
+//app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'client')));
+
 var server_hosts = config.allowedHosts.split(':');
 
 /*
@@ -169,6 +172,7 @@ io.on('connection', function (socket) {
           socket.emit('loadStatusChange', { status: "Error: Could not parse server information. <br /><a href=\"/logout\">Try Again</a>"});
           socket.disconnect();
       }
+      // DEBUG
       return;
       clients[sid] = new irc.Client(connect.host, connect.user, {
         userName: connect.user,

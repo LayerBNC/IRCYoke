@@ -30,6 +30,18 @@
     margin-bottom: 0;
 
 }
+.hdbar {
+    color: white;
+}
+.hdbarlink {
+    color: white;
+}
+.hdbarlink:hover {
+    color: lightgrey;
+}
+#userlist {
+    padding-top: 20px;
+}
 .rightTab {
     background-color: grey;
     height: 100%;

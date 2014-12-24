@@ -4,7 +4,7 @@
     http://github.com/Cydrobolt/IRCYoke
     @copyright [c] 2014 Chaoyi Zha
     @license MIT
-    @title IRCYoke Main Script
+    @title IRCYoke Init Script
 */
 
 $(function () {
@@ -28,26 +28,8 @@ $(function () {
 
     //socket.on('readyConnect', function () {
     socket.on('connect', function () {
-      $.get( "initui.html", function( data ) {
+      $.get( "src/static/initui.html", function( data ) {
           $('#wrapAll').html(data);
-          $('#nonUI').remove();
-          $('#fill_username').text(username);
-          var Userlist = Backbone.Model.extend({
-            promptColor: function() {
-                var cssColor = prompt("Please enter a CSS color:");
-                this.set({color: cssColor});
-            }
-          });
-
-        window.sidebar = new Userlist;
-
-        sidebar.on('change:color', function(model, color) {
-          $('#sidebar').css({background: color});
-        });
-
-
-
-
         });
     });
     socket.on('log', function (data) {

@@ -1,9 +1,15 @@
 extends ./layout.jade
 block css
-    link(rel='stylesheet', href='css/loading.css')
-    link(rel='stylesheet', href='css/lib/animate.css')
-    link(rel='stylesheet', href='css/ui.css')
-    link(rel='stylesheet', id='nonUI', href='/css/style.css')
+    // DEBUG
+        link(rel='stylesheet', href='css/loading.css')
+        link(rel='stylesheet', href='css/lib/animate.css')
+        link(rel='stylesheet', href='css/ui.css')
+        link(rel='stylesheet', id='nonUI', href='/css/style.css')
+
+    link(rel='stylesheet', href='src/static/css/loading.css')
+    link(rel='stylesheet', href='src/static/css/lib/animate.css')
+    link(rel='stylesheet', href='src/static/css/ui.css')
+    link(rel='stylesheet', id='nonUI', href='/src/static/css/style.css')
 block content
     div(id="wrapAll")
         div(style='text-align:center')
@@ -30,4 +36,13 @@ block content
     script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js")
     script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
     script(src="//cdn.socket.io/socket.io-1.2.1.js")
-    script(src="js/ircyoke.min.js")
+
+    // DEBUG
+    script(src="src/init.js")
+    script(src="src/underscore-min.js")
+    script(src="src/backbone-min.js")
+    script(src="src/handlebars-v2.0.0.js")
+
+
+
+    // script(src="js/ircyoke.min.js")
