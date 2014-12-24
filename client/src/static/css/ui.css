@@ -45,6 +45,9 @@
 .rightTab {
     background-color: grey;
     height: 100%;
+    //width: 19%;
+    float: right;
+    // visibility: hidden;
 }
 .fpIntro {
     position: relative;
@@ -70,10 +73,14 @@ body {
 }
 
 .messages {
-  height: 100%;
-  // margin: 0;
-  overflow-y: scroll;
-  // padding: 10px 20px 10px 20px;
+  border-radius: 2px;
+  border: 2px solid darkblue;
+  height: 90%;
+  width: 78%;
+  overflow-y: auto;
+  position: fixed;
+  top: 10px;
+  padding: 10px 20px 10px 20px;
 }
 
 
@@ -98,13 +105,12 @@ body {
   /*border: 10px solid #000;
   border-color: grey;*/
   border-color: orange;
-  float: right;
+  float: left;
   // height: 60px;
   // outline: none;
-  width: 95%;
+  width: 73%;
   color: black;
   right: 10px;
-  // width: 100%;
   font-size: 100%;
 }
 .lpad {
