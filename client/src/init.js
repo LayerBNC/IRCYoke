@@ -30,6 +30,7 @@ $(function () {
     socket.on('connect', function () {
       $.get( "src/static/initui.html", function( data ) {
           $('#wrapAll').html(data);
+          // var sidebarHbT = loadHbT('#sidebar-template');
         });
     });
     socket.on('log', function (data) {

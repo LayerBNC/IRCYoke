@@ -9,6 +9,14 @@
 #wrapAll {
     // Stuff
 }
+.network, .channel {
+    list-style-type: none;
+}
+.networkname {
+    font-weight: bold;
+    font-size: 110%;
+}
+
 .header {
     font-family: 'Open Sans', Arial, sans-serif;
     //position: absolute;
@@ -34,10 +42,10 @@
     color: white;
 }
 .hdbarlink {
-    color: white;
+    color: lightblue;
 }
 .hdbarlink:hover {
-    color: lightgrey;
+    color: lightgreen;
 }
 #userlist {
     padding-top: 20px;
@@ -57,6 +65,7 @@ body {
     margin: 0;
     height: 100%;
     width: 100%;
+    overflow-x: auto;
 }
 
 .container-fluid {
@@ -67,23 +76,32 @@ body {
 
 /* Messages */
 
-.chatArea {
-  height: 100%;
-  padding-bottom: 60px;
-}
 
 .messages {
-  border-radius: 2px;
   border: 2px solid darkblue;
   height: 90%;
-  width: 78%;
+  width: 68%;
   overflow-y: auto;
   position: fixed;
   top: 10px;
-  padding: 10px 20px 10px 20px;
 }
+.messages, .rusers {
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    padding: 10px 20px 10px 20px;
+    border-radius: 4px;
+    top: 10px;
 
 
+}
+.rusers {
+    border: 2px solid red;
+    right: 19%;
+
+    position: fixed;
+    width: 11%;
+
+    height: 90%;
+}
 /* Input */
 
 #field_outer {
@@ -96,7 +114,7 @@ body {
     float: left;
     text-align: right;
     padding-right: 15px;
-    padding-bottom: 5px;
+    bottom: 2px;
     width: 5%;
 }
 
@@ -108,10 +126,15 @@ body {
   float: left;
   // height: 60px;
   // outline: none;
-  width: 73%;
+  width: 75%;
   color: black;
   right: 10px;
+  margin-bottom: 12px;
   font-size: 100%;
+}
+.footer {
+    bottom: 0;
+    position: fixed;
 }
 .lpad {
     padding-left: 1%;

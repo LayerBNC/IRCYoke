@@ -1,5 +1,31 @@
-<!--  DEBUG -->
-<script src="src/static/templates/sidebar.hbs" id="sidebar-template" type="text/x-handlebars-template"></script>
+<!-- HANDLEBAR TEMPLATES -->
+
+<script src="src/static/templates/sidebar.hbs" id="sidebar-template" type="text/x-handlebars-template">
+    <div class="items">
+        <ul>
+        {{#each networks}}
+            <li class="network">
+                <span class="networkname stripe">{{name}}</span>
+                <ul>
+                    {{#each channels}}
+                        <li class="channel stripe">{{this}}</li>
+                    {{/each}}
+                </ul>
+            </li>
+        {{/each}}
+        </ul>
+    </div>
+
+    <div class="footer">
+            &copy; IRCYoke 2015 &middot; <a class="hdbarlink" href="//github.com/cydrobolt/IRCYoke">GitHub</a>
+    </div>
+</script>
+
+
+<!-- / HANDLEBAR TEMPLATES -->
+
+
+
 <script src="src/lib.js"></script>
 
 <script src="src/client.js"></script>
@@ -13,6 +39,8 @@
 
                 <div class="chatArea row-md-9">
                     <div class="messages form-control"></div>
+
+                    <div class="pull-right rusers form-control"></div>
                 </div>
                 <div class="bottomWrap row-md-1" id="field_outer">
 
@@ -22,7 +50,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-2 rightTab">
             <div class="header row-md-2">
               <span class="name">IRCYoke</span>
@@ -34,9 +62,10 @@
               <a class="hdbarlink pull-right" href="//github.com/cydrobolt/IRCYoke/wiki">Help</a>
             </span>
             <!-- Userlist -->
+            <br />
             <div id="userlist">
                 <!-- // DEBUG -->
-                <br />
+
                 <h3 style="text-align:center">Loading...</h3>
             </div>
         </div>
