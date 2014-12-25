@@ -1,13 +1,12 @@
 {
     "_comment": "ZNC Settings",
-    "zncPort": 1234,
-    "zncSSL": true,
-    "zncHosts": "someserver.server.com",
+    "allowedPorts": ["6667", "+6697"],
+    "allowedHosts": "chat.freenode.net:irc.freenode.net",
 
     "_comment": "Database Settings",
-    "mongoConnect": "mongodb://localhost/databasename",
+    "mongoConnect": "mongodb://localhost/IRCYoke",
 
     "_comment": "Web Server Settings",
-    "webPort": 1337,
+    "webPort": 5000,
     "webHost": "127.0.0.1"
 }
