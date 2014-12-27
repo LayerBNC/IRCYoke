@@ -17,9 +17,11 @@ $(function () {
 
     // Dynamically load handlebar templates
 
-    window.source   =  $('#sidebar-template').html();//$("#sidebar-template").html();
-
+    window.source   =  $('#sidebar-template').html();
     window.sidebarTemplate = Handlebars.compile(source);
+
+    window.sourceMsgField   =  $('#message-template').html();
+    window.messageTemplate = Handlebars.compile(sourceMsgField);
 
     window.SidebarModel = Backbone.Model.extend({
         promptColor: function() {
@@ -32,9 +34,12 @@ $(function () {
     window.sidebar = new SidebarModel();
 
     window.MessageModel = Backbone.Model.extend({
-        newMessage: function() {
-            var cssColor = prompt("Please enter a CSS color:");
-            this.set({color: cssColor});
+        newMessage: function(from, text) {
+            var fmessageContextChg = {
+                message: [{from: from , text: text }]
+            };
+            var fmessageHtmlChg = messageTemplate(fmessageContextChg);
+            $(".messages").append(fmessageHtmlChg);
         }
     });
 
@@ -61,6 +66,16 @@ $(function () {
         $('li').removeClass('active');
         $("li:contains("+newChan+")").filter(function() {return $(this).text() === newChan;}).addClass('active');
 
+        // Render the channel's messages
+        msgList = messages[newChan];
+
+
+
+        var fmessageContextChg = {
+            message: msgList
+        };
+        var fmessageHtmlChg = messageTemplate(fmessageContextChg);
+        $(".messages").html(fmessageHtmlChg);
     });
 
 });
@@ -74,23 +89,23 @@ function updateChan (self) {
 function enumChans () {
     var channels = Object.keys(messages);
     var statusIndex = channels.indexOf("Status");
+    sidebar.set({
+        networks: [
+            {
+                name: "freenode",
+                channels: channels
+            }
+        ]
+    });
 
 }
-function msgUpdate(chan, msg) {
+function msgUpdate(chan, msg, from) {
     if (mChan == chan) {
         // If the message comes from the channel currently open
-        message.newMessage(msg); // Trigger a Backbone event
+        message.newMessage(from, msg); // Trigger a Backbone event
     }
     else {
         // If chan not currently open, then ignore for now
-        sidebar.set({
-            networks: [
-                {
-                    name: "freenode",
-                    channels: channels
-                }
-            ]
-        });
     }
 }
 function processRaw (rawObject) {
@@ -103,20 +118,25 @@ function processRaw (rawObject) {
     if(command == "JOIN") {
         var chan2j = rargs[0];
         messages[chan2j] = [];
-        messages[chan2j][0] = "Joined channel "+chan2j;
         enumChans();
     }
     if (command == "PRIVMSG") {
         var recvPMChan = rargs[0];
         var recvPMMsg = rargs[1];
+        var recvPMFrom = rawObject.nick;
         /*if (messages.indexOf(recvPMChan) < 0) {
             // It is a private message
             messages[recvPMChan] = [];
         }*/
-
-        console.log( messages[recvPMChan].push(recvPMMsg) );
-        console.log(messages[recvPMChan]);
-        msgUpdate(recvPMChan, recvPMMsg);
+        messages[recvPMChan].push({
+            from: recvPMFrom,
+            text: recvPMMsg
+        });
+        // Message limit changeable
+        if (messages[recvPMChan].length > 230) {
+            messages[recvPMChan].shift(); // Get rid of first index
+        }
+        msgUpdate(recvPMChan, recvPMMsg, recvPMFrom);
     }
     if (rargs[0] == "*") {
         messages.Status.push(rargs[1]);

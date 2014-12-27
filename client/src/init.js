@@ -37,6 +37,10 @@ $(function () {
         console.log(data.log);
         processRaw(data);
     });
+    socket.on('ulUpdate', function (data) {
+        // Userlist update for a channel
+        // TODO
+    });
 
 
 });

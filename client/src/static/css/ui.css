@@ -102,6 +102,7 @@ body {
   border: 2px solid darkblue;
   height: 90%;
   width: 68%;
+  color: black;
   overflow-y: auto;
   position: fixed;
   top: 10px;
@@ -137,6 +138,7 @@ body {
     padding-right: 15px;
     bottom: 2px;
     width: 5%;
+    word-wrap: break-word;
 }
 
 

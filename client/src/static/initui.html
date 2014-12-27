@@ -1,6 +1,6 @@
 <!-- HANDLEBAR TEMPLATES -->
 
-<script src="src/static/templates/sidebar.hbs" id="sidebar-template" type="text/x-handlebars-template">
+<script id="sidebar-template" type="text/x-handlebars-template">
 
     <div class="items">
 
@@ -24,6 +24,15 @@
 
 </script>
 
+<script id="message-template" type="text/x-handlebars-template">
+
+        {{#each message}}
+            <p><strong>{{from}}</strong>: {{text}}</p>
+        {{/each}}
+
+
+</script>
+
 
 <!-- / HANDLEBAR TEMPLATES -->
 
@@ -41,7 +50,7 @@
             <div class="fpIntro">
 
                 <div class="chatArea row-md-9">
-                    <div class="messages form-control"></div>
+                    <div class="messages"></div>
 
                     <div class="pull-right rusers form-control"></div>
                 </div>

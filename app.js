@@ -136,10 +136,9 @@ io.on('connection', function (socket) {
           socket.emit('kill', function () {
               socket.disconnect();
           });
-          socket.emit('loadStatusChange', { status: "stillconnectedorno"});
           return;
       }
-      var usernameRegex = /[a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]*/;
+      var usernameRegex = /[a-z_\-\[\]\\^{}|`][a-zA-Z0-9_\-\[\]\\^{}|`]*/;
       var usernameMatchRegex = server_user.match(usernameRegex);
       if (usernameMatchRegex != server_user) {
           socket.emit('loadStatusChange', { status: 'Invalid username. Disconnected by server. <br /><a href="/logout">Try Again</a>' });
