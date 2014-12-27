@@ -33,14 +33,51 @@ $(function () {
           // var sidebarHbT = loadHbT('#sidebar-template');
         });
     });
+    window.messages = [];
+    messages.Status = [];
+    window.beforeUI = true;
+    var bUIprocessRaw = function (rawObject) {
+        // This function is used prior to UI loading
+        rawObject = rawObject.log;
+        var command = rawObject.command;
+        var rargs = rawObject.args; // This is an array
+        if (rargs[0] == "*") {
+            messages.Status.push({
+                from: rawObject.prefix,
+                text: rargs[1]
+            });
+        }
+        if (command == "rpl_motd") {
+            messages.Status.push({
+                from: rawObject.prefix,
+                text: rargs[1]
+            });
+        }
+    };
     socket.on('log', function (data) {
         console.log(data.log);
-        processRaw(data);
+        if (beforeUI === true) {
+            bUIprocessRaw(data);
+
+        }
+        else {
+            processRaw(data);
+        }
+
     });
     socket.on('ulUpdate', function (data) {
         // Userlist update for a channel
         // TODO
     });
+    function sendMessage(e) {
+        if (e.keyCode == 13) {
+            var msg2s = $('#inputMessage').val();
+            var chan2s = mChan;
+            socket.emit("sendMsg", { channel: chan2s, message: msg2s });
+            $('#inputMessage').val("");
+            return false;
+        }
+    }
 
 
 });

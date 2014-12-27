@@ -6,10 +6,9 @@
     @license MIT
     @title IRCYoke Client Script
 */
-window.messages = [];
-messages.Status = [];
-messages.Status.push("Connecting to server...");
+
 $(function () {
+    window.beforeUI = false;
 
     $('#nonUI').remove();
     $('#fill_username').text(username);
@@ -139,6 +138,9 @@ function processRaw (rawObject) {
         msgUpdate(recvPMChan, recvPMMsg, recvPMFrom);
     }
     if (rargs[0] == "*") {
-        messages.Status.push(rargs[1]);
+        messages.Status.push({
+            from: rawObject.prefix,
+            text: rargs[1]
+        });
     }
-}
+};
