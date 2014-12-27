@@ -25,9 +25,9 @@ $(function () {
         $('#statusText').text("Disconnected from server. Retrying...");
     });
 
-
-    //socket.on('readyConnect', function () {
-    socket.on('connect', function () {
+    // DEBUG
+    socket.on('readyConnect', function () {
+    //socket.on('connect', function () {
       $.get( "src/static/initui.html", function( data ) {
           $('#wrapAll').html(data);
           // var sidebarHbT = loadHbT('#sidebar-template');
@@ -35,6 +35,7 @@ $(function () {
     });
     socket.on('log', function (data) {
         console.log(data.log);
+        processRaw(data);
     });
 
 

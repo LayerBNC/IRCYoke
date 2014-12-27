@@ -38,6 +38,27 @@
     margin-bottom: 0;
 
 }
+.stripe {
+    /*
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    */
+}
+.sbarlink {
+    color: white;
+}
+.sbarlink:visited {color:white;}
+.sbarlink:active {color:white;}
+.hdbarlink {
+    color: lightgreen;
+}
+.active {
+    font-weight: bold;
+    color: green;
+}
+.statusButton {
+    text-align: center;
+}
 .hdbar {
     color: white;
 }

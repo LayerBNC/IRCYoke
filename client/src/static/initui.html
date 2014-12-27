@@ -1,14 +1,16 @@
 <!-- HANDLEBAR TEMPLATES -->
 
 <script src="src/static/templates/sidebar.hbs" id="sidebar-template" type="text/x-handlebars-template">
+
     <div class="items">
+
         <ul>
         {{#each networks}}
             <li class="network">
-                <span class="networkname stripe">{{name}}</span>
+                <span class="networkname">{{name}}</span>
                 <ul>
                     {{#each channels}}
-                        <li class="channel stripe">{{this}}</li>
+                        <li class="channel stripe"><a class="sbarlink" onclick="updateChan(this);" href="#">{{this}}</a></li>
                     {{/each}}
                 </ul>
             </li>
@@ -19,6 +21,7 @@
     <div class="footer">
             &copy; IRCYoke 2015 &middot; <a class="hdbarlink" href="//github.com/cydrobolt/IRCYoke">GitHub</a>
     </div>
+
 </script>
 
 

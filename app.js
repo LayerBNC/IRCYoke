@@ -74,10 +74,16 @@ var server_hosts = config.allowedHosts.split(':');
  * Yoke
  */
 var yoke = {
-    listen: function (socket, client) {
-        client.on('raw', function (msg) {
+    listen: function (socket, Client) {
+        Client.on('raw', function (msg) {
             socket.emit('log', { log: msg });
         }); // debug
+
+        Client.on('names', function (channel, nicks) {
+            socket.emit('ulUpdate', { ul: nicks });
+        });
+
+
     }
 };
 
@@ -173,14 +179,14 @@ io.on('connection', function (socket) {
           socket.disconnect();
       }
       // DEBUG
-      return;
+      // return;
       clients[sid] = new irc.Client(connect.host, connect.user, {
         userName: connect.user,
         realName: 'IRCYoke User',
       	port: connect.port,
         debug: true,
     	secure: connect.ssl,
-        channels: ['##cydrobolt', '##fwilson'],
+        channels: ['##cydrobolt'],
         password: connect.pass
     });
 
