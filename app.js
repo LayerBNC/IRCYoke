@@ -110,6 +110,33 @@ io.on('connection', function (socket) {
       /*}, 10000); // Ten second grace period to reconnect before killing connection*/
 
   });
+  socket.on('sendMessage', function(data) {
+     try {
+         var sendTo = data.to;
+         var sendMsg = data.message;
+         var sendCli = clients[socket.sid];
+         sendCli.say(sendTo, sendMsg);
+     }
+     catch (err) {
+         socket.send('Error. Client not found');
+     }
+  });
+  socket.on('sendCommand', function(data) {
+     try {
+         var sendCli = clients[socket.sid];
+         var cmdArgsArray = data;
+         console.log(cmdArgsArray);
+         try {
+             sendCli.send.apply(sendCli, cmdArgsArray);
+         }
+         catch (err) {
+             socket.emit('error', "Invalid command sent.")
+         }
+     }
+     catch (err) {
+        console.log('Error: '+err);
+     }
+  });
   socket.on('confDecConnect', function (data) {
       var sid = data.sid;
       socket.sid = sid;
@@ -174,7 +201,7 @@ io.on('connection', function (socket) {
           }
       }
       catch (err) {
-          socket.emit('loadStatusChange', { status: "Error: Could not parse server information. <br /><a href=\"/logout\">Try Again</a>"});
+          socket.emit('loadStatusChange', { status: "Error: Could not parse server information. <br /><a style=\"color:white\" href=\"/logout\">Try Again</a>"});
           socket.disconnect();
       }
       // DEBUG
@@ -185,12 +212,12 @@ io.on('connection', function (socket) {
       	port: connect.port,
         debug: true,
     	secure: connect.ssl,
-        channels: ['##cydrobolt'],
+        channels: ['##cydrobolt-test'],
         password: connect.pass
     });
 
 
-      socket.emit('loadStatusChange', { status: "Connected to IRC! Waiting for stabilization..." });
+      socket.emit('loadStatusChange', { status: "Connecting to IRC..." });
       clients[sid].on('registered', function() {
           socket.emit('loadStatusChange', { status: "Connection complete, initializing UI..." });
           socket.emit('readyConnect');

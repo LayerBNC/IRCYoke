@@ -10,7 +10,7 @@
                 <span class="networkname">{{name}}</span>
                 <ul>
                     {{#each channels}}
-                        <li class="channel stripe"><a class="sbarlink" onclick="updateChan(this);" href="#">{{this}}</a></li>
+                        <li class="channel stripe"><a class="sbarlink" onclick="updateChan(this);" href="#">{{this}}</a>&nbsp;<span id="{{this}}-badge" class="badge">0</span></li>
                     {{/each}}
                 </ul>
             </li>
@@ -24,10 +24,12 @@
 
 </script>
 
+<!-- Chat message -->
+
 <script id="message-template" type="text/x-handlebars-template">
 
         {{#each message}}
-            <p><strong>{{from}}</strong>: {{text}}</p>
+            <p><strong class="{{class}}">{{from}}</strong>: <span class="{{class}}">{{text}}</span></p>
         {{/each}}
 
 
@@ -71,7 +73,7 @@
             <br />
             <span class="hdbar">
               <a class="hdbarlink pull-left" href="/logout">Log out</a>
-              <a class="hdbarlink pull-right" href="//github.com/cydrobolt/IRCYoke/wiki">Help</a>
+              <a class="hdbarlink pull-right" target="__blank" href="//github.com/cydrobolt/IRCYoke/wiki">Help</a>
             </span>
             <!-- Userlist -->
             <br />

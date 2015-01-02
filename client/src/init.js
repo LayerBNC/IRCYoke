@@ -6,9 +6,9 @@
     @license MIT
     @title IRCYoke Init Script
 */
-
+var socket;
 $(function () {
-    var socket = io(serverLocation);
+    socket = io(serverLocation);
     var kbs = false;
     socket.on('loadStatusChange', function (data) {
         $('#statusText').html(data.status);
@@ -24,6 +24,7 @@ $(function () {
         if (kbs === true) {return;}
         $('#statusText').text("Disconnected from server. Retrying...");
     });
+
 
     // DEBUG
     socket.on('readyConnect', function () {
@@ -52,6 +53,8 @@ $(function () {
                 from: rawObject.prefix,
                 text: rargs[1]
             });
+            window.selfNick = rawObject.args[0];
+            window.selfServer = rawObject.prefix;
         }
     };
     socket.on('log', function (data) {
@@ -69,15 +72,6 @@ $(function () {
         // Userlist update for a channel
         // TODO
     });
-    function sendMessage(e) {
-        if (e.keyCode == 13) {
-            var msg2s = $('#inputMessage').val();
-            var chan2s = mChan;
-            socket.emit("sendMsg", { channel: chan2s, message: msg2s });
-            $('#inputMessage').val("");
-            return false;
-        }
-    }
 
 
 });

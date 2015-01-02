@@ -8,6 +8,7 @@
 */
 
 $(function () {
+    window.nMsg = [];
     window.beforeUI = false;
 
     $('#nonUI').remove();
@@ -58,26 +59,45 @@ $(function () {
         var fsidebarHtmlChg = sidebarTemplate(fsidebarContextChg);
         $("#userlist").html(fsidebarHtmlChg);
     });
+
     message.on('change:channel', function(model, data) {
         var newChan = data; // Set to a scoped variable in order to prevent async conflicts
         console.log("Listening to new channel...");
+        if (newChan == "Status") {
+            $('.inputMessage').prop('disabled', true);
+        }
+        else {
+            $('.inputMessage').prop('disabled', false);
+        }
         window.mChan = data;
-        $('li').removeClass('active');
-        $("li:contains("+newChan+")").filter(function() {return $(this).text() === newChan;}).addClass('active');
+        $('.sbarlink').removeClass('active');
+        $( ".sbarlink:contains('"+newChan+"')" ).addClass('active');
 
         // Render the channel's messages
         msgList = messages[newChan];
-
-
-
         var fmessageContextChg = {
             message: msgList
         };
         var fmessageHtmlChg = messageTemplate(fmessageContextChg);
         $(".messages").html(fmessageHtmlChg);
+        scrollBottom();
     });
+    $('body').delegate('.inputMessage', 'keypress', function(event) {
+        if (event.keyCode == 13) {
+            sendMessage($('.inputMessage').val(), mChan);
+            $('.inputMessage').val('');
+        }
+    });
+    message.set({
+        channel: "Status"
+    });
+    $('.inputMessage').prop('disabled', true);
+
 
 });
+function scrollBottom() {
+    $('.messages').scrollTop($('.messages')[0].scrollHeight);
+}
 function updateChan (self) {
     var chan = $(self).text();
     console.log(chan);
@@ -104,7 +124,10 @@ function msgUpdate(chan, msg, from) {
         message.newMessage(from, msg); // Trigger a Backbone event
     }
     else {
-        // If chan not currently open, then ignore for now
+        // If chan not currently open, then show a badge
+        nMsg[chan] = (nMsg[chan] + 1) || 1;
+        chanFil = chan.replace(/#/g, "\\#");
+        $(chanFil+"-badge").html(nMsg[chan]);
     }
 }
 function processRaw (rawObject) {
@@ -113,13 +136,107 @@ function processRaw (rawObject) {
     var from = rawObject.prefix;
     var rargs = rawObject.args; // This is an array
     console.log(rargs);
-    console.log(JSON.stringify(rawObject));
-    if(command == "JOIN") {
+    if(command == "JOIN" && rawObject.nick == selfNick) {
         var chan2j = rargs[0];
         messages[chan2j] = [];
         enumChans();
+        var inter0 = "You have joined "+chan2j;
+        messages[chan2j].push({
+            from: chan2j,
+            text: inter0
+        });
+        message.set({
+            channel: chan2j
+        });
+
     }
-    if (command == "PRIVMSG") {
+    else if(command == "PART" && rawObject.nick == selfNick) {
+        var chan2l = rargs[0];
+        delete messages[chan2l];
+        enumChans();
+    }
+    else if(command == "NICK") {
+        var newNick = rargs[0];
+        var oldNick = rawObject.nick;
+        if (oldNick == selfNick) {
+            selfNick = newNick;
+            $('#fill_username').text(selfNick);
+            return;
+        }
+
+        // syncUserList();
+        var inter4 = oldNick+" is now known as "+newNick;
+        // DEBUG
+        // Need to search ULs to find user
+        messages.Status.push({
+            from: selfServer,
+            text: inter4
+        });
+    }
+    else if(command == "JOIN" && rawObject.nick != selfNick) {
+        var joinNick = rawObject.nick;
+        var joinHost = rawObject.prefix;
+        var channelJoined = rawObject.args[0];
+        var inter1 = joinNick+" ("+joinHost+") has joined the channel";
+        messages[channelJoined].push({
+            from: channelJoined,
+            text: inter1
+        });
+        msgUpdate(channelJoined, inter1, channelJoined);
+    }
+    else if(command == "PART" && rawObject.nick != selfNick) {
+        var partNick = rawObject.nick;
+        var partHost = rawObject.prefix;
+        var channelParted = rawObject.args[0];
+        var inter6 = partNick+" ("+partHost+") has left the channel";
+        messages[channelParted].push({
+            from: channelParted,
+            text: inter6
+        });
+        msgUpdate(channelParted, inter6, channelParted);
+    }
+    else if(command == "KICK") {
+        var chanKicked = rargs[0];
+        var kicked = rargs[1];
+
+        if (kicked == selfNick) {
+            // If user was kicked
+            delete messages[chanKicked];
+            enumChans();
+            return;
+        }
+        var inter2 = kicked+" kicked from channel by "+rawObject.nick;
+        messages[chanKicked].push({
+            from: chanKicked,
+            text: inter2
+        });
+        msgUpdate(chanKicked, inter2, chanKicked);
+        console.log('Someone was kicked.');
+    }
+    else if(command == "NOTICE") {
+        var inter3 = " - "+rawObject.nick+" - "+rawObject.args[1];
+        messages.Status.push({
+            from: selfServer,
+            text: inter3
+        });
+        console.log('Someone was kicked.');
+    }
+    else if(command == "477") {
+        var from477 = rawObject.args[1];
+        var message477 = rawObject.args[2];
+        // Blocked from joining
+        messages.Status.push({
+            from: from477,
+            text: message477
+        });
+        messages[from477] = [];
+        enumChans();
+        messages[from477].push({
+            from: from477,
+            text: message477
+        });
+    }
+    else if (command == "PRIVMSG") {
         var recvPMChan = rargs[0];
         var recvPMMsg = rargs[1];
         var recvPMFrom = rawObject.nick;
@@ -137,10 +254,41 @@ function processRaw (rawObject) {
         }
         msgUpdate(recvPMChan, recvPMMsg, recvPMFrom);
     }
-    if (rargs[0] == "*") {
+    else if (rargs[0] == "*") {
         messages.Status.push({
             from: rawObject.prefix,
             text: rargs[1]
         });
     }
-};
+    else if (command == "rpl_motd") {
+        messages.Status.push({
+            from: rawObject.prefix,
+            text: rargs[1]
+        });
+    }
+}
+function sendCommand(command) {
+    var cmdParse = command.substr(1).toLowerCase();
+
+    var cmdArgs = cmdParse.split(' ');
+    if ( (cmdArgs[0] == "part" || cmdArgs[0] == "leave") && cmdArgs[1] === undefined ) {
+        cmdArgs[1] = mChan;
+    }
+    socket.emit('sendCommand', cmdArgs);
+}
+function sendMessage(message, to) {
+    if(message.startsWith('/')) {
+        sendCommand(message);
+        return;
+    }
+    socket.emit("sendMessage", { to: to, message: message });
+    msgUpdate(to, message, selfNick);
+    scrollBottom();
+    console.log("Message sent!");
+}
+socket.on('error', function (data) {
+    messages.Status.push({
+        from: "IRCYoke Server",
+        text: data
+    });
+});
