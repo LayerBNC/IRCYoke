@@ -1,4 +1,4 @@
 IRCYoke
 =======
 
-Multi-network web interface for ZNC.
+The practical IRC client.
