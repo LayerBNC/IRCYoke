@@ -80,7 +80,7 @@ var yoke = {
         }); // debug
 
         Client.on('names', function (channel, nicks) {
-            socket.emit('ulUpdate', { ul: nicks });
+            socket.emit('ulUpdate', { channel: channel, ul: nicks });
         });
 
 
@@ -130,7 +130,7 @@ io.on('connection', function (socket) {
              sendCli.send.apply(sendCli, cmdArgsArray);
          }
          catch (err) {
-             socket.emit('error', "Invalid command sent.")
+             socket.emit('error', "Invalid command sent.");
          }
      }
      catch (err) {

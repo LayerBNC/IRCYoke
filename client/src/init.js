@@ -68,10 +68,7 @@ $(function () {
         }
 
     });
-    socket.on('ulUpdate', function (data) {
-        // Userlist update for a channel
-        // TODO
-    });
+    
 
 
 });

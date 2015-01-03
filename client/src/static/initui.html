@@ -1,5 +1,6 @@
 <!-- HANDLEBAR TEMPLATES -->
 
+<!-- Channel List -->
 <script id="sidebar-template" type="text/x-handlebars-template">
 
     <div class="items">
@@ -29,12 +30,46 @@
 <script id="message-template" type="text/x-handlebars-template">
 
         {{#each message}}
-            <p><strong class="{{class}}">{{from}}</strong>: <span class="{{class}}">{{text}}</span></p>
+            <p><strong>{{from}}</strong>: <span>{{text}}</span></p>
         {{/each}}
 
 
 </script>
 
+<!-- Userlist entries -->
+
+<script id="userlist-template" type="text/x-handlebars-template">
+        {{#if oper}}
+            <div class="ul_opers">
+                {{#each oper}}
+                    <p><strong>{{this}}</strong></p>
+                {{/each}}
+            </div>
+        {{/if}}
+        {{#if voice}}
+            <div class="ul_voices">
+                {{#each voice}}
+                    <p><strong>{{this}}</strong></p>
+                {{/each}}
+            </div>
+        {{/if}}
+        {{#if other}}
+            <div class="ul_other">
+                <!-- e.g halfop -->
+                {{#each other}}
+                    <p><strong>{{this}}</strong></p>
+                {{/each}}
+            </div>
+        {{/if}}
+        {{#if user}}
+            <div class="ul_users">
+                {{#each user}}
+                    <p><strong>{{this}}</strong></p>
+                {{/each}}
+            </div>
+        {{/if}}
+
+</script>
 
 <!-- / HANDLEBAR TEMPLATES -->
 

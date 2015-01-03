@@ -10,6 +10,7 @@
 $(function () {
     window.nMsg = [];
     window.beforeUI = false;
+    window.userlists = [];
 
     $('#nonUI').remove();
     $('#fill_username').text(username);
@@ -22,6 +23,9 @@ $(function () {
 
     window.sourceMsgField   =  $('#message-template').html();
     window.messageTemplate = Handlebars.compile(sourceMsgField);
+
+    window.sourceUserList   =  $('#userlist-template').html();
+    window.userListTemplate = Handlebars.compile(sourceUserList);
 
     window.SidebarModel = Backbone.Model.extend({
         promptColor: function() {
@@ -61,6 +65,9 @@ $(function () {
     });
 
     message.on('change:channel', function(model, data) {
+
+        // On channel change
+
         var newChan = data; // Set to a scoped variable in order to prevent async conflicts
         console.log("Listening to new channel...");
         if (newChan == "Status") {
@@ -71,7 +78,9 @@ $(function () {
         }
         window.mChan = data;
         $('.sbarlink').removeClass('active');
-        $( ".sbarlink:contains('"+newChan+"')" ).addClass('active');
+        $( ".sbarlink:contains('"+newChan+"')" ).filter(function() {
+            return $(this).text() == newChan;
+        }).addClass('active');
 
         // Render the channel's messages
         msgList = messages[newChan];
@@ -80,6 +89,26 @@ $(function () {
         };
         var fmessageHtmlChg = messageTemplate(fmessageContextChg);
         $(".messages").html(fmessageHtmlChg);
+
+        // Update userlist
+        try {
+            userList = userlists[newChan];
+            var fuserListContextChg = {
+                oper: userList.opers,
+                voice: userList.voices,
+                other: userList.other,
+                user: userList.users
+            };
+            var fuserListHtmlChg = userListTemplate(fuserListContextChg);
+            $('.rusers').html(fuserListHtmlChg);
+        }
+        catch (err) {
+            // Probably switching to "Status"
+            // Ignore the error and empty the userlist
+            $('.rusers').html("");
+        }
+
+
         scrollBottom();
     });
     $('body').delegate('.inputMessage', 'keypress', function(event) {
@@ -266,12 +295,23 @@ function processRaw (rawObject) {
             text: rargs[1]
         });
     }
+    else if (command == "rpl_namreply") {
+        var namrChan = rawObject.args[2];
+        var namrList = rawObject.args[3];
+
+        var returnObject = {
+            ul: namrList,
+            chan: namrChan
+        };
+        ulUpdate(returnObject);
+    }
 }
 function sendCommand(command) {
     var cmdParse = command.substr(1).toLowerCase();
 
     var cmdArgs = cmdParse.split(' ');
     if ( (cmdArgs[0] == "part" || cmdArgs[0] == "leave") && cmdArgs[1] === undefined ) {
+        cmdArgs[0] = "part";
         cmdArgs[1] = mChan;
     }
     socket.emit('sendCommand', cmdArgs);
@@ -281,10 +321,49 @@ function sendMessage(message, to) {
         sendCommand(message);
         return;
     }
+    messages[to].push({
+        from: selfNick,
+        text: message
+    });
     socket.emit("sendMessage", { to: to, message: message });
     msgUpdate(to, message, selfNick);
     scrollBottom();
     console.log("Message sent!");
+}
+function ulUpdate (data) {
+    var userList = data.ul;
+    var userListChan = data.chan;
+
+    var userListArray = userList.split(' ');
+    var parseUserList = [];
+    parseUserList.opers = [];
+    parseUserList.voices = [];
+    parseUserList.other = [];
+    parseUserList.users = [];
+
+    userListArray.forEach(function (element, index, array) {
+        // index is key
+        // value is element
+        var type = "user";
+        if (element.startsWith('@')) {
+            type = "oper";
+            parseUserList.opers.push(element);
+        }
+        else if (element.startsWith('+')) {
+            type = "voice";
+            parseUserList.voices.push(element);
+        }
+        else if (element.startsWith('%')) {
+            type = "other";
+            parseUserList.other.push(element);
+        }
+        else {
+            parseUserList.users.push(element);
+        }
+    });
+    console.log(parseUserList);
+    userlists[userListChan] = parseUserList;
+
 }
 socket.on('error', function (data) {
     messages.Status.push({

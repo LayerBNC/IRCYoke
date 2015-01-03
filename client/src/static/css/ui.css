@@ -71,6 +71,7 @@
 }
 #userlist {
     padding-top: 20px;
+
 }
 .rightTab {
     background-color: grey;
@@ -124,6 +125,8 @@ body {
     width: 11%;
 
     height: 90%;
+    background: transparent;
+    background-color: lightblue;
 }
 /* Input */
 
@@ -162,4 +165,17 @@ body {
 }
 .lpad {
     padding-left: 1%;
+}
+
+// userlist
+
+.ul_opers {
+    background-color: orangered;
+}
+.ul_voices {
+    background-color: green;
+}
+
+.ul_other {
+    background-color: orange;
 }
