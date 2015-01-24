@@ -40,16 +40,16 @@
 
 <script id="userlist-template" type="text/x-handlebars-template">
         {{#if oper}}
-            <div class="ul_chanops" style="background-color:orange">
+            <div class="ul_chanops" id="ul_chanops" style="background-color:orange;color: black; width: 10%">
                 {{#each oper}}
-                    <p><strong>{{this}}</strong></p>
+                    <p><strong class="ulEntry">{{this}}</strong></p>
                 {{/each}}
             </div>
         {{/if}}
         {{#if voice}}
             <div class="ul_voices">
                 {{#each voice}}
-                    <p><strong>{{this}}</strong></p>
+                    <p><strong class="ulEntry">{{this}}</strong></p>
                 {{/each}}
             </div>
         {{/if}}
@@ -57,14 +57,14 @@
             <div class="ul_other">
                 <!-- e.g halfop -->
                 {{#each other}}
-                    <p><strong>{{this}}</strong></p>
+                    <p><strong class="ulEntry">{{this}}</strong></p>
                 {{/each}}
             </div>
         {{/if}}
         {{#if user}}
             <div class="ul_users">
                 {{#each user}}
-                    <p><strong>{{this}}</strong></p>
+                    <p><strong class="ulEntry">{{this}}</strong></p>
                 {{/each}}
             </div>
         {{/if}}
@@ -73,8 +73,6 @@
 
 <!-- / HANDLEBAR TEMPLATES -->
 
-
-
 <script src="src/lib.js"></script>
 
 <script src="src/client.js"></script>
@@ -82,24 +80,27 @@
 <div class="container-fluid">
     <div class="clearfix"></div>
 
+
+
     <div class="fpWrapper row-md-10">
-        <div class="col-md-10">
+        <div class="col-md-9">
             <div class="fpIntro">
 
-                <div class="chatArea row-md-9">
+                <div class="chatArea row-md-7">
                     <div class="messages"></div>
-
-                    <div class="pull-right rusers form-control"></div>
                 </div>
                 <div class="bottomWrap row-md-1" id="field_outer">
 
                     <strong id="fill_username"></strong>
 
                     <input class="form-control inputMessage" placeholder="Type here..."/>
+
                 </div>
             </div>
         </div>
-
+        <div class="col-md-1">
+            <div class="pull-right rusers form-control"></div>
+        </div>
         <div class="col-md-2 rightTab">
             <div class="header row-md-2">
               <span class="name">IRCYoke</span>
@@ -112,7 +113,7 @@
             </span>
             <!-- Userlist -->
             <br />
-            <div id="userlist">
+            <div class="chanlist" id="userlist">
                 <!-- // DEBUG -->
 
                 <h3 style="text-align:center">Loading...</h3>

@@ -15,7 +15,7 @@
 .networkname {
     font-weight: bold;
     font-size: 110%;
-    color: blue;
+    color: #19B5FE;
 }
 
 .header {
@@ -69,16 +69,14 @@
 .hdbarlink:hover {
     color: lightgreen;
 }
-#userlist {
+.chanlist {
     padding-top: 20px;
 
 }
 .rightTab {
-    background-color: grey;
+    background-color: #34495e;
     height: 100%;
-    //width: 19%;
     float: right;
-    // visibility: hidden;
 }
 .fpIntro {
     position: relative;
@@ -109,7 +107,7 @@ body {
   position: fixed;
   top: 10px;
 }
-.messages, .rusers {
+.messages {
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     padding: 10px 20px 10px 20px;
     border-radius: 4px;
@@ -118,15 +116,17 @@ body {
 
 }
 .rusers {
-    border: 2px solid red;
-    right: 19%;
-
+    // border: 2px solid red;
+    right: 39%;
+    bottom: 0px;
+    top: 0px;
+    left: 70%;
+    color: white;
     position: fixed;
-    width: 11%;
     overflow-y: scroll;
-    height: 90%;
+    height: 100%;
     background: transparent;
-    background-color: lightblue;
+    background-color: #95a5a6;
 }
 /* Input */
 
@@ -153,7 +153,7 @@ body {
   float: left;
   // height: 60px;
   // outline: none;
-  width: 75%;
+  width: 63%;
   color: black;
   right: 10px;
   margin-bottom: 12px;
@@ -168,15 +168,24 @@ body {
 }
 
 // userlist
+.ulEntry {
+    color: #2C3E50;
+}
 
-.ul_chanops {
+#ul_chanops {
     background-color: orange;
+    color: black !important;
+    width: 10%;
 }
 
 .ul_voices {
     background-color: green;
+    color: #E4F1FE !important;
+    width: 10%;
 }
 
 .ul_other {
     background-color: orange;
+    color: #ecf0f1 !important;
+    width: 10%;
 }
