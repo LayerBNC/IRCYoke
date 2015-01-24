@@ -44,6 +44,26 @@ $(function () {
             };
             var fmessageHtmlChg = messageTemplate(fmessageContextChg);
             $(".messages").append(fmessageHtmlChg);
+        },
+        enumUl: function () {
+            channel = mChan;
+            try {
+                userList = userlists[channel];
+                var fuserListContextChg = {
+                    oper: userList.opers,
+                    voice: userList.voices,
+                    other: userList.other,
+                    user: userList.users
+                };
+                var fuserListHtmlChg = userListTemplate(fuserListContextChg);
+                $('.rusers').html(fuserListHtmlChg);
+            }
+            catch (err) {
+                // Probably switching to "Status"
+                // Ignore the error and empty the userlist
+                $('.rusers').html("");
+            }
+
         }
     });
 
@@ -165,7 +185,9 @@ function processRaw (rawObject) {
     var from = rawObject.prefix;
     var rargs = rawObject.args; // This is an array
     console.log(rargs);
+
     if(command == "JOIN" && rawObject.nick == selfNick) {
+        // User joins a channel
         var chan2j = rargs[0];
         messages[chan2j] = [];
         enumChans();
@@ -174,9 +196,19 @@ function processRaw (rawObject) {
             from: chan2j,
             text: inter0
         });
+        userlists[chan2j] = [];
+        userlists[chan2j].opers = [];
+        userlists[chan2j].users = [];
+        userlists[chan2j].voices = [];
+        userlists[chan2j].others = [];
+
+
         message.set({
             channel: chan2j
         });
+        sendCommand("/WHO "+chan2j);
+        // delete userlists[chan2j];
+
 
     }
     else if(command == "PART" && rawObject.nick == selfNick) {
@@ -224,6 +256,10 @@ function processRaw (rawObject) {
         });
         msgUpdate(channelParted, inter6, channelParted);
     }
+    else if(command == "rpl_endofwho") {
+        message.enumUl();
+        // re-enum userlists
+    }
     else if(command == "KICK") {
         var chanKicked = rargs[0];
         var kicked = rargs[1];
@@ -249,6 +285,44 @@ function processRaw (rawObject) {
             text: inter3
         });
         console.log('Someone was kicked.');
+    }
+    else if(command == "rpl_whoreply") {
+        console.log("RECEIVED 352 WHO REPLY");
+        console.log(rargs);
+        // `/who` namelist response
+        // delete userlists[rargs[1]]; DO THIS AT WHO CALL
+        var ulNick = rargs[5];
+        var ulCStatus = rargs[6];
+        var ulChan = rargs[1];
+
+        var type = "user"; // default is user
+        console.log(ulCStatus);
+        switch (ulCStatus) {
+            case 'H@':
+                type = "oper";
+                break;
+
+            case 'H+':
+                type = "voice";
+                break;
+
+            case 'H%':
+                type = "other";
+                break;
+        }
+        console.log("STATUS: "+type);
+        if (type == "oper") {
+            userlists[ulChan].opers.push(ulNick);
+        }
+        else if (type == "voice") {
+            userlists[ulChan].voices.push(ulNick);
+        }
+        else if (type == "other") {
+            userlists[ulChan].other.push(ulNick);
+        }
+        else {
+            userlists[ulChan].users.push(ulNick);
+        }
     }
     else if(command == "477") {
         var from477 = rawObject.args[1];
@@ -303,16 +377,27 @@ function processRaw (rawObject) {
             ul: namrList,
             chan: namrChan
         };
-        ulUpdate(returnObject);
+        // ulUpdate(returnObject);
+        // Should be replaced by WHO
     }
 }
 function sendCommand(command) {
+    console.log("Sent command: "+command);
     var cmdParse = command.substr(1).toLowerCase();
 
     var cmdArgs = cmdParse.split(' ');
     if ( (cmdArgs[0] == "part" || cmdArgs[0] == "leave") && cmdArgs[1] === undefined ) {
         cmdArgs[0] = "part";
         cmdArgs[1] = mChan;
+    }
+    if ( cmdArgs[0] == "who") {
+        var whochan = cmdArgs[1];
+        delete userlists[whochan];
+        userlists[whochan] = [];
+        userlists[whochan].opers = [];
+        userlists[whochan].users = [];
+        userlists[whochan].voices = [];
+        userlists[whochan].others = [];
     }
     socket.emit('sendCommand', cmdArgs);
 }
