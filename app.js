@@ -23,7 +23,6 @@ var bodyParser = require('body-parser');
 var irc = require('irc');
 var uuid = require('node-uuid');
 var serverLocation = config.webHost + ":" + config.webPort;
-var socketLocation = config.webHost + ":" + parseInt(config.webPort+1);
 
 var app = express();
 
@@ -33,8 +32,8 @@ var users = []; // Userinfo
 var clients = []; // IRC Connections
 var timers = []; // Self explanatory
 
-server.listen(parseInt(config.webPort+1));
-app.listen(config.webPort);
+server.listen(parseInt(config.webPort));
+// app.listen(config.webPort);
 
 console.log("Starting IRCYoke...");
 console.log("IRCYoke listening at " + serverLocation);
@@ -240,7 +239,7 @@ app.get('/', function(req,res) {
     var sid = req.session.sid;
     if (sid && sid !== null && sid !== undefined) {
         var sendUser = users[sid].username;
-        res.render('mainLoggedIn', {sid: sid, serverLocation: socketLocation, username: sendUser});
+        res.render('mainLoggedIn', {sid: sid, serverLocation: serverLocation, username: sendUser});
     }
     else {
         var serverHosts = config.allowedHosts.split(':');

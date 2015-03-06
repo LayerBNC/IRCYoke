@@ -186,6 +186,40 @@ function processRaw (rawObject) {
     var rargs = rawObject.args; // This is an array
     console.log(rargs);
 
+    /* check if userlist needs to be updated */
+    if (command == "NICK" || command == "KICK" || command == "PART") {
+            var updateReq = [];
+            if (command == "NICK") {
+                if (selfNick == rargs[0]) {
+                    // TODO: Optimize
+                    _.each(userList, function (chanData, chanName) {
+                        sendCommand("/WHO "+chanName);
+                    });
+                }
+                else {
+                    _.each(userList, function (chanData, chanName) {
+                        if ($.inArray(rawObject.nick, chanData)) {
+                            // If user matches user changing nick
+                            updateReq.push(chanName);
+                            var nick_change = rawObject.nick + " is now known as "+ rargs[0];
+                            msgUpdate(chanName, nick_change, chanName);
+                        }
+                    });
+                }
+                _.each(updateReq, function (needUpdateChan) {
+                    // Update list
+                    sendCommand("/WHO "+needUpdateChan);
+                });
+            }
+            else if (command == "PART" || command == "JOIN" || command == "KICK") {
+                sendCommand("/WHO "+rargs[0]);
+            }
+    }
+
+    /* check if message needs to be pushed to view */
+
+
+
     if(command == "JOIN" && rawObject.nick == selfNick) {
         // User joins a channel
         var chan2j = rargs[0];
@@ -380,6 +414,14 @@ function processRaw (rawObject) {
         // ulUpdate(returnObject);
         // Should be replaced by WHO
     }
+    else if (rargs[0] == selfNick) {
+        // Generic command reply, e.g whois reply
+        // Push to current view
+        rargs.splice(0, 1); // Get rid of prefix
+        var concat_reply = rargs.join(" ");
+
+        msgUpdate(mChan, concat_reply, rawObject.prefix);
+    }
 }
 function sendCommand(command) {
     console.log("Sent command: "+command);
@@ -414,6 +456,9 @@ function sendMessage(message, to) {
     msgUpdate(to, message, selfNick);
     scrollBottom();
     console.log("Message sent!");
+}
+function pushCurrentView(from, message) {
+    msgUpdate(mChan, message, from); // Push to current view
 }
 function ulUpdate (data) {
     var userList = data.ul;
