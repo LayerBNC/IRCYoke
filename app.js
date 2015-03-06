@@ -158,7 +158,7 @@ io.on('connection', function (socket) {
           server_user = users[sid].username;
       }
       catch (err) {
-          socket.emit('loadStatusChange', { status: "Disconnected by server: Invalid session ID <br /><a href=\"/logout\">Try Again</a>"});
+          socket.emit('loadStatusChange', { status: "Disconnected by server: Invalid session ID <br /><a id=\"dark\" href=\"/logout\">Try Again</a>"});
           socket.emit('kill', function () {
               socket.disconnect();
           });
@@ -167,7 +167,7 @@ io.on('connection', function (socket) {
       var usernameRegex = /[a-z_\-\[\]\\^{}|`][a-zA-Z0-9_\-\[\]\\^{}|`]*/;
       var usernameMatchRegex = server_user.match(usernameRegex);
       if (usernameMatchRegex != server_user) {
-          socket.emit('loadStatusChange', { status: 'Invalid username. Disconnected by server. <br /><a href="/logout">Try Again</a>' });
+          socket.emit('loadStatusChange', { status: 'Invalid username. Disconnected by server. <br /><a id=\"dark\" href="/logout">Try Again</a>' });
           socket.emit('kill', function () {
               socket.disconnect();
           });
