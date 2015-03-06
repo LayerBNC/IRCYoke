@@ -239,7 +239,7 @@ app.get('/', function(req,res) {
     var sid = req.session.sid;
     if (sid && sid !== null && sid !== undefined) {
         var sendUser = users[sid].username;
-        res.render('mainLoggedIn', {sid: sid, serverLocation: serverLocation, username: sendUser});
+        res.render('mainLoggedIn', {sid: sid, serverLocation: config.webPublicLocation, username: sendUser});
     }
     else {
         var serverHosts = config.allowedHosts.split(':');

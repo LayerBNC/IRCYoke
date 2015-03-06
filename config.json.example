@@ -8,5 +8,8 @@
 
     "_comment": "Web Server Settings",
     "webPort": 5000,
-    "webHost": "127.0.0.1"
+    "webHost": "127.0.0.1",
+
+    "_comment": "This should be IRCYoke's public web address",
+    "webPublicLocation": "localhost:5000"
 }
