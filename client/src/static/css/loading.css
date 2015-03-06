@@ -1,3 +1,8 @@
+ a {
+     color: #34495e !important;
+     font-weight: bold;
+ }
+
   .tetrominos {
   position: absolute;
   top: 50%;
